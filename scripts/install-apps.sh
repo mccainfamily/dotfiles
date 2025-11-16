@@ -57,6 +57,23 @@ log_bundle() {
     echo -e "${CYAN}📦${NC} $1"
 }
 
+################################################################################
+# Cleanup function
+################################################################################
+
+# Global variable to track sudo keepalive PID
+SUDO_KEEPALIVE_PID=""
+
+cleanup() {
+    # Kill sudo keepalive if it's running
+    if [[ -n "${SUDO_KEEPALIVE_PID}" ]]; then
+        kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
+    fi
+}
+
+# Set trap to cleanup on exit
+trap cleanup EXIT
+
 # List available bundles
 list_bundles() {
     echo "Available Bundles:"
@@ -435,6 +452,17 @@ main() {
     else
         log_info "Skipping confirmation (non-interactive mode)"
     fi
+
+    # Request sudo access upfront for cask installations
+    log_info "Requesting sudo access for package installation..."
+    if ! sudo -v; then
+        log_error "Sudo access required for installing cask applications"
+        exit 1
+    fi
+
+    # Keep sudo alive in background during installation
+    ( while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null ) &
+    SUDO_KEEPALIVE_PID=$!
 
     # Install bundles
     echo
