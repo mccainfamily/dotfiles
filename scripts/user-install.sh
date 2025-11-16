@@ -189,14 +189,22 @@ chmod +x "${HOMEBREW_INSTALL_SCRIPT}"
 if bash "${HOMEBREW_INSTALL_SCRIPT}"; then
     log_success "Homebrew is ready"
 
-    # Ensure Homebrew is in PATH for this session
-    if command -v brew >/dev/null 2>&1; then
-        log_info "Homebrew version: $(brew --version | head -n1)"
+    # Detect architecture and set Homebrew path
+    ARCH="$(uname -m)"
+    if [[ "${ARCH}" == "arm64" ]]; then
+        BREW_PREFIX="/opt/homebrew"
     else
-        # Manually set up PATH if not already done
-        eval "$(${BREW_BIN} shellenv)"
-        log_info "Homebrew version: $(brew --version | head -n1)"
+        BREW_PREFIX="/usr/local"
     fi
+    BREW_BIN="${BREW_PREFIX}/bin/brew"
+
+    # Ensure Homebrew is in PATH for this session
+    if ! command -v brew >/dev/null 2>&1; then
+        log_info "Adding Homebrew to PATH for this session..."
+        eval "$(${BREW_BIN} shellenv)"
+    fi
+
+    log_info "Homebrew version: $(brew --version | head -n1)"
 else
     log_error "Homebrew installation failed"
     exit 1

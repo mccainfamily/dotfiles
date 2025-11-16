@@ -189,20 +189,31 @@ install_bundle() {
 
     log_bundle "Installing module: ${module}"
 
-    # Check if running on Apple Silicon or Intel
-    ARCH="$(uname -m)"
-    if [[ "${ARCH}" == "arm64" ]]; then
-        BREW_PREFIX="/opt/homebrew"
+    # Check if brew is available in PATH, otherwise use architecture-specific path
+    if command -v brew >/dev/null 2>&1; then
+        BREW_BIN="brew"
     else
-        BREW_PREFIX="/usr/local"
-    fi
+        # Fallback to architecture-specific path
+        ARCH="$(uname -m)"
+        if [[ "${ARCH}" == "arm64" ]]; then
+            BREW_PREFIX="/opt/homebrew"
+        else
+            BREW_PREFIX="/usr/local"
+        fi
+        BREW_BIN="${BREW_PREFIX}/bin/brew"
 
-    BREW_BIN="${BREW_PREFIX}/bin/brew"
+        # Verify brew exists at this path
+        if [[ ! -x "${BREW_BIN}" ]]; then
+            log_error "Homebrew not found. Please install Homebrew first."
+            log_info "Visit: https://brew.sh or run: ./scripts/single-user-homebrew-install.sh"
+            return 1
+        fi
+    fi
 
     # Install Brewfile if it exists
     if [[ -f "${BUNDLES_DIR}/${module}.Brewfile" ]]; then
         log_info "Installing Homebrew packages from ${module}.Brewfile..."
-        if "${BREW_BIN}" bundle install --file="${BUNDLES_DIR}/${module}.Brewfile"; then
+        if ${BREW_BIN} bundle install --file="${BUNDLES_DIR}/${module}.Brewfile"; then
             log_success "Brewfile for '${module}' installed successfully"
         else
             log_error "Failed to install Brewfile for '${module}'"
@@ -213,7 +224,7 @@ install_bundle() {
     # Install Appfile if it exists
     if [[ -f "${BUNDLES_DIR}/${module}.Appfile" ]]; then
         log_info "Installing App Store apps from ${module}.Appfile..."
-        if "${BREW_BIN}" bundle install --file="${BUNDLES_DIR}/${module}.Appfile"; then
+        if ${BREW_BIN} bundle install --file="${BUNDLES_DIR}/${module}.Appfile"; then
             log_success "Appfile for '${module}' installed successfully"
         else
             log_error "Failed to install Appfile for '${module}'"
