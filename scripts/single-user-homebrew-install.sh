@@ -40,6 +40,23 @@ log_error() {
 }
 
 ################################################################################
+# Cleanup function
+################################################################################
+
+# Global variable to track sudo keepalive PID
+SUDO_KEEPALIVE_PID=""
+
+cleanup() {
+    # Kill sudo keepalive if it's running
+    if [[ -n "${SUDO_KEEPALIVE_PID}" ]]; then
+        kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
+    fi
+}
+
+# Set trap to cleanup on exit
+trap cleanup EXIT
+
+################################################################################
 # Main Installation
 ################################################################################
 
@@ -116,8 +133,6 @@ main() {
     export NONINTERACTIVE=1
 
     if /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
-        # Kill sudo keepalive
-        kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
         log_success "Homebrew installed at ${BREW_PREFIX}"
 
         # Add Homebrew to PATH for this session
