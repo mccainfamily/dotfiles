@@ -226,13 +226,13 @@ fi
 chmod +x "${INSTALL_APPS_SCRIPT}"
 
 # Build installation command
-INSTALL_ARGS=""
+INSTALL_ARGS="--yes"  # Non-interactive mode for automated installation
 if [[ -n "${INSTALL_PROFILE}" ]]; then
     log_info "Installing profile: ${INSTALL_PROFILE}"
-    INSTALL_ARGS="--profile ${INSTALL_PROFILE}"
+    INSTALL_ARGS="${INSTALL_ARGS} --profile ${INSTALL_PROFILE}"
 elif [[ -n "${INSTALL_BUNDLES}" ]]; then
     log_info "Installing bundles: ${INSTALL_BUNDLES}"
-    INSTALL_ARGS="--bundles \"${INSTALL_BUNDLES}\""
+    INSTALL_ARGS="${INSTALL_ARGS} --bundles \"${INSTALL_BUNDLES}\""
 fi
 
 if [[ -n "${EXCLUDE_BUNDLES}" ]]; then
@@ -240,7 +240,7 @@ if [[ -n "${EXCLUDE_BUNDLES}" ]]; then
     INSTALL_ARGS="${INSTALL_ARGS} --exclude \"${EXCLUDE_BUNDLES}\""
 fi
 
-log_info "Running install-apps.sh..."
+log_info "Running install-apps.sh in non-interactive mode..."
 cd "${DOTFILES_DIR}"
 
 # Run install-apps.sh

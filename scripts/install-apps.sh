@@ -261,6 +261,7 @@ OPTIONS:
     --profile <name>       Install bundles for a specific profile
     --bundles "<list>"     Install specific bundles (space-separated)
     --exclude "<list>"     Exclude specific bundles (space-separated)
+    --yes, -y              Skip confirmation prompt (non-interactive mode)
     --list-profiles        List all available profiles
     --list-bundles         List all available bundles
     --show-bundle <name>   Show contents of a specific bundle
@@ -341,6 +342,8 @@ main() {
         exit 0
     fi
 
+    SKIP_CONFIRMATION=0
+
     while [[ $# -gt 0 ]]; do
         case $1 in
             --profile)
@@ -354,6 +357,10 @@ main() {
             --exclude)
                 EXCLUDE_BUNDLES="$2"
                 shift 2
+                ;;
+            --yes|-y)
+                SKIP_CONFIRMATION=1
+                shift
                 ;;
             --list-profiles)
                 list_profiles
@@ -417,11 +424,16 @@ main() {
         echo "  - ${bundle}"
     done
     echo
-    read -p "Continue? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        log_info "Cancelled"
-        exit 0
+
+    if [[ ${SKIP_CONFIRMATION} -eq 0 ]]; then
+        read -p "Continue? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            log_info "Cancelled"
+            exit 0
+        fi
+    else
+        log_info "Skipping confirmation (non-interactive mode)"
     fi
 
     # Install bundles
