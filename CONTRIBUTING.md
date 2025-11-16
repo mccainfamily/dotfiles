@@ -11,6 +11,7 @@ make init
 ```
 
 This will:
+
 - Install Homebrew (if not already installed)
 - Install the `dotfiles-dev` bundle (pre-commit, shellcheck, markdownlint, etc.)
 - Install pre-commit git hooks
@@ -26,12 +27,14 @@ This will:
 ### Initial Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/mccainfamily/dotfiles.git
    cd dotfiles
    ```
 
 2. **Initialize development environment:**
+
    ```bash
    make init
    ```
@@ -42,12 +45,14 @@ This will:
    - Set up pre-commit git hooks
 
    Or manually:
+
    ```bash
    make install-deps    # Install Homebrew + dotfiles-dev bundle
    make install-hooks   # Install pre-commit hooks
    ```
 
 3. **Verify setup:**
+
    ```bash
    make check          # Run all validation checks
    ```
@@ -57,6 +62,7 @@ This will:
 ### Making Changes
 
 1. **Create a new branch:**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -67,11 +73,13 @@ This will:
    - Add custom scripts if needed
 
 3. **Validate your changes:**
+
    ```bash
    make check          # Run all validation checks
    ```
 
 4. **Test your changes:**
+
    ```bash
    # Test a specific bundle
    make show-bundle BUNDLE=base
@@ -81,6 +89,7 @@ This will:
    ```
 
 5. **Commit your changes:**
+
    ```bash
    git add .
    git commit -m "feat: add new data-science bundle"
@@ -144,6 +153,7 @@ Bundle, causing installation failures on some systems."
 The conventional commits format is enforced by a pre-commit hook. If your commit message doesn't follow the format, the commit will be rejected with a helpful error message.
 
 To fix a rejected commit:
+
 ```bash
 # Amend your commit message
 git commit --amend
@@ -164,7 +174,7 @@ Pre-commit hooks run automatically before each commit to ensure code quality:
 - **Brewfile validation:** Ensures Brewfiles are syntactically correct
 - **YAML validation:** Validates configuration files
 
-#### Running hooks manually:
+#### Running hooks manually
 
 ```bash
 # Run all hooks on all files
@@ -202,6 +212,7 @@ dotfiles/
 ### Development Bundle
 
 The `dotfiles-dev` bundle contains all tools needed for developing this repository:
+
 - **pre-commit**: Git hooks framework
 - **shellcheck**: Shell script linter
 - **markdownlint-cli**: Markdown linter
@@ -363,6 +374,7 @@ make pre-commit-run
 - Use shellcheck-compliant code
 - Make scripts executable: `chmod +x script.sh`
 - Use the logging functions from base.sh:
+
   ```bash
   log_info "Information message"
   log_success "Success message"
@@ -375,6 +387,7 @@ make pre-commit-run
 - Add comments describing packages
 - Group related packages with section headers
 - Use consistent formatting:
+
   ```ruby
   brew "package-name"    # Description
   cask "app-name"        # Description

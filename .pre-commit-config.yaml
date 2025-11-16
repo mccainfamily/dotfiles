@@ -31,7 +31,6 @@ repos:
 
       # Check YAML syntax
       - id: check-yaml
-        args: ['--safe']
 
       # Check JSON syntax
       - id: check-json
@@ -59,14 +58,14 @@ repos:
     hooks:
       - id: shellcheck
         args: ['--severity=warning']
-        exclude: 'node_modules|\.git'
+        exclude: 'node_modules|\.git|config/\.(bashrc|bash_profile|zshrc)'
 
   # Markdown linting
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.39.0
     hooks:
       - id: markdownlint
-        args: ['--fix']
+        args: ['--fix', '--config', '.markdownlint.json']
         exclude: 'node_modules|\.git'
 
   # Check for secrets and credentials

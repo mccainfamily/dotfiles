@@ -1,0 +1,16 @@
+# AV Studio Bundle - App Store
+# Audio and video production tools from the Mac App Store
+
+# ========================================
+# Video Production
+# ========================================
+
+mas "Final Cut Pro", id: 424389933      # Professional video editing
+
+# ========================================
+# Audio Production & DJ Software
+# ========================================
+
+mas "X32-Mix", id: 566167328            # Behringer X32 mixer control
+mas "djay Pro", id: 450527929           # Professional DJ software
+mas "VirtualDJ Home", id: 1610238590    # DJ mixing software

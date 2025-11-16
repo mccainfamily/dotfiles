@@ -1,0 +1,49 @@
+# SSH Config - macOS Keychain Integration
+# ~/.ssh/config
+
+# Global SSH settings for macOS keychain integration
+Host *
+    # Use macOS keychain for SSH key passphrases
+    UseKeychain yes
+
+    # Automatically add keys to ssh-agent
+    AddKeysToAgent yes
+
+    # Specify default identity files to load
+    IdentityFile ~/.ssh/id_ed25519
+    IdentityFile ~/.ssh/id_rsa
+    IdentityFile ~/.ssh/id_ecdsa
+
+    # Connection settings
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+    # Security settings
+    Compression yes
+
+    # Performance
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h:%p
+    ControlPersist 10m
+
+# GitHub
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+# GitLab
+Host gitlab.com
+    HostName gitlab.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+# Add your custom SSH hosts below
+# Example:
+# Host myserver
+#     HostName 192.168.1.100
+#     User myuser
+#     Port 22
+#     IdentityFile ~/.ssh/id_ed25519

@@ -1,0 +1,50 @@
+{
+  "title": "Dotfiles Documentation",
+  "description": "Comprehensive documentation for the modular dotfiles system",
+  "author": "McCain Family",
+  "language": "en",
+  "gitbook": ">=3.2.3",
+  "root": ".",
+  "structure": {
+    "readme": "README.md",
+    "summary": "SUMMARY.md"
+  },
+  "plugins": [
+    "edit-link",
+    "github",
+    "hints",
+    "expandable-chapters",
+    "search-plus",
+    "code",
+    "splitter",
+    "page-toc-button",
+    "back-to-top-button",
+    "theme-comscore",
+    "-lunr",
+    "-search"
+  ],
+  "pluginsConfig": {
+    "edit-link": {
+      "base": "https://github.com/mccainfamily/dotfiles/edit/main/docs",
+      "label": "Edit This Page"
+    },
+    "github": {
+      "url": "https://github.com/mccainfamily/dotfiles"
+    },
+    "theme-default": {
+      "showLevel": true
+    },
+    "page-toc-button": {
+      "maxTocDepth": 2,
+      "minTocSize": 2
+    }
+  },
+  "variables": {
+    "repo": "mccainfamily/dotfiles"
+  },
+  "links": {
+    "sidebar": {
+      "GitHub Repository": "https://github.com/mccainfamily/dotfiles"
+    }
+  }
+}

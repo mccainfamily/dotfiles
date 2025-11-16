@@ -1,0 +1,14 @@
+# Creative Bundle - App Store
+# Design and creative tools from the Mac App Store
+
+# ========================================
+# Audio Production
+# ========================================
+
+mas "Logic Pro", id: 634148309          # Professional music production
+
+# ========================================
+# Diagram & Design Tools
+# ========================================
+
+mas "OmniGraffle", id: 1142578753       # Diagramming and design

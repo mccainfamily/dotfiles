@@ -1,0 +1,361 @@
+# Starship Prompt Configuration
+# ~/.config/starship.toml
+# Network Engineering & DevOps Optimized
+
+# Timeout for commands
+command_timeout = 1000
+
+# Add a newline before the prompt
+add_newline = true
+
+# Format - comprehensive for network engineering
+format = """
+[┌─](bold blue)$username$hostname$directory$git_branch$git_status\
+$python$nodejs$golang$rust$terraform$aws$gcloud$azure$kubernetes$docker_context$container\
+$time$cmd_duration
+[└─](bold blue)$character"""
+
+# Right side prompt - additional info
+right_format = """$jobs$battery"""
+
+# Prompt character
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+# Username
+[username]
+format = "[$user]($style)@"
+style_user = "bold yellow"
+style_root = "bold red"
+show_always = false
+disabled = false
+
+# Hostname
+[hostname]
+format = "[$hostname]($style) "
+style = "bold cyan"
+ssh_only = true
+disabled = false
+
+# Directory
+[directory]
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "bold cyan"
+truncation_length = 3
+truncate_to_repo = true
+read_only = " 🔒"
+truncation_symbol = "…/"
+
+# Git branch
+[git_branch]
+format = "on [$symbol$branch(:$remote_branch)]($style) "
+symbol = " "
+style = "bold purple"
+
+# Git status
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+style = "bold red"
+conflicted = "⚔️ "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+untracked = "?${count} "
+stashed = "📦 "
+modified = "!${count} "
+staged = "+${count} "
+renamed = "»${count} "
+deleted = "✘${count} "
+
+# ========================================
+# Language & Runtime Segments
+# ========================================
+
+# Python
+[python]
+format = "via [${symbol}${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style)"
+symbol = " "
+style = "yellow bold"
+pyenv_version_name = false
+detect_extensions = ["py"]
+detect_files = [".python-version", "Pipfile", "pyproject.toml", "requirements.txt", "setup.py", "tox.ini"]
+
+# Node.js
+[nodejs]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "bold green"
+detect_extensions = ["js", "mjs", "cjs", "ts"]
+detect_files = ["package.json", ".node-version"]
+
+# Go
+[golang]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "bold cyan"
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum", "glide.yaml", "Gopkg.yml", "Gopkg.lock", ".go-version"]
+
+# Rust
+[rust]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "bold red"
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml"]
+
+# ========================================
+# Cloud & Infrastructure Segments
+# ========================================
+
+# AWS
+[aws]
+format = "on [$symbol($profile )(\\($region\\) )(\\[$duration\\] )]($style)"
+symbol = "☁️ "
+style = "bold yellow"
+disabled = false
+
+[aws.region_aliases]
+us-east-1 = "use1"
+us-east-2 = "use2"
+us-west-1 = "usw1"
+us-west-2 = "usw2"
+eu-west-1 = "euw1"
+eu-west-2 = "euw2"
+eu-central-1 = "euc1"
+ap-southeast-1 = "apse1"
+ap-southeast-2 = "apse2"
+ap-northeast-1 = "apne1"
+
+# Google Cloud
+[gcloud]
+format = "on [$symbol$account(@$domain)(\\($region\\))]($style) "
+symbol = "☁️ "
+style = "bold blue"
+disabled = false
+
+[gcloud.region_aliases]
+us-central1 = "usc1"
+us-east1 = "use1"
+us-west1 = "usw1"
+europe-west1 = "euw1"
+asia-east1 = "ase1"
+
+# Azure
+[azure]
+format = "on [$symbol($subscription)]($style) "
+symbol = "󰠅 "
+style = "bold blue"
+disabled = false
+
+# Terraform
+[terraform]
+format = "via [$symbol$workspace]($style) "
+symbol = "💠 "
+style = "bold purple"
+disabled = false
+detect_extensions = ["tf", "tfplan", "tfstate"]
+detect_files = [".terraform"]
+
+# ========================================
+# Container & Orchestration Segments
+# ========================================
+
+# Kubernetes
+[kubernetes]
+format = "on [$symbol$context( \\($namespace\\))]($style) "
+symbol = "☸ "
+style = "bold cyan"
+disabled = false
+detect_files = ["k8s", "Dockerfile", "docker-compose.yml"]
+
+[kubernetes.context_aliases]
+"arn:aws:eks:.*:.*:cluster/(?P<cluster>[\\w-]+)" = "$cluster"
+"gke_.*_(?P<cluster>[\\w-]+)" = "$cluster"
+
+# Docker Context
+[docker_context]
+format = "via [$symbol$context]($style) "
+symbol = " "
+style = "bold blue"
+only_with_files = true
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+disabled = false
+
+# Container (running in container)
+[container]
+format = "[$symbol \\[$name\\]]($style) "
+symbol = "⬢"
+style = "bold red dimmed"
+disabled = false
+
+# ========================================
+# Version Control Systems
+# ========================================
+
+# Git commit
+[git_commit]
+commit_hash_length = 7
+tag_symbol = "🏷 "
+disabled = false
+
+# Git state (merge, rebase, etc.)
+[git_state]
+format = "\\([$state( $progress_current/$progress_total)]($style)\\) "
+style = "bright-black"
+disabled = false
+
+# Git metrics
+[git_metrics]
+added_style = "bold green"
+deleted_style = "bold red"
+disabled = false
+
+# ========================================
+# Package Managers & Tools
+# ========================================
+
+# Helm
+[helm]
+format = "via [$symbol($version )]($style)"
+symbol = "⎈ "
+style = "bold white"
+disabled = false
+detect_files = ["helmfile.yaml", "Chart.yaml"]
+
+# Pulumi
+[pulumi]
+format = "via [$symbol$stack]($style) "
+symbol = " "
+style = "bold purple"
+disabled = false
+
+# Ansible
+[ansible]
+format = "via [$symbol$version]($style) "
+symbol = "🅰 "
+style = "bold red"
+disabled = false
+detect_files = ["ansible.cfg", "playbook.yml", "playbook.yaml"]
+
+# ========================================
+# Environment & System Info
+# ========================================
+
+# Shell
+[shell]
+bash_indicator = "bsh"
+fish_indicator = "fsh"
+zsh_indicator = "zsh"
+powershell_indicator = "psh"
+disabled = true
+
+# Time
+[time]
+disabled = false
+format = "at [$time]($style) "
+style = "bold white"
+time_format = "%T"
+utc_time_offset = "local"
+
+# Command duration
+[cmd_duration]
+min_time = 500
+format = "took [$duration]($style) "
+style = "bold yellow"
+show_milliseconds = false
+disabled = false
+
+# Jobs (background)
+[jobs]
+symbol = "✦"
+style = "bold blue"
+number_threshold = 1
+symbol_threshold = 1
+format = "[$symbol$number]($style) "
+
+# Battery
+[battery]
+full_symbol = "🔋"
+charging_symbol = "⚡"
+discharging_symbol = "💀"
+disabled = false
+
+[[battery.display]]
+threshold = 30
+style = "bold red"
+
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+
+[[battery.display]]
+threshold = 80
+style = "bold green"
+
+# ========================================
+# Network & Security Tools
+# ========================================
+
+# OpenStack
+[openstack]
+format = "on [$symbol$cloud(\\($project\\))]($style) "
+symbol = "☁️ "
+style = "bold yellow"
+disabled = false
+
+# Vagrant
+[vagrant]
+format = "via [$symbol($version )]($style)"
+symbol = "⍱ "
+style = "bold cyan"
+disabled = false
+detect_files = ["Vagrantfile"]
+
+# Nix
+[nix_shell]
+format = "via [$symbol$state( \\($name\\))]($style) "
+symbol = "❄️ "
+style = "bold blue"
+disabled = false
+
+# ========================================
+# Status & Error Handling
+# ========================================
+
+# Status (exit code)
+[status]
+style = "bold red"
+symbol = "✖"
+disabled = false
+format = "[$symbol $status]($style) "
+
+# Memory usage
+[memory_usage]
+disabled = true
+threshold = 75
+symbol = "🐏 "
+style = "bold dimmed white"
+format = "via $symbol[$ram( | $swap)]($style) "
+
+# ========================================
+# Custom Segments
+# ========================================
+
+# IP Address (custom command)
+[custom.ip]
+command = "curl -s ifconfig.me"
+when = "false"  # Disabled by default (slow)
+symbol = "🌐 "
+style = "bold yellow"
+disabled = true
+
+# VPN Status
+[custom.vpn]
+command = "scutil --nc status | grep -q Connected && echo 'VPN'"
+when = "scutil --nc status | grep -q Connected"
+symbol = "🔒 "
+style = "bold green"
+disabled = true
