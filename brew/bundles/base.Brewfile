@@ -1,11 +1,6 @@
 # Base Bundle - Essential Tools for All Users
 # Core utilities that should be installed on every system
 
-# Taps
-tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/cask-fonts"
-
 # ========================================
 # Essential Unix Tools
 # ========================================
