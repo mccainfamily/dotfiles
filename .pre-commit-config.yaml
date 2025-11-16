@@ -1,0 +1,121 @@
+---
+# Pre-commit hooks for dotfiles repository
+# Install with: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # General checks for all files
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Prevent committing large files
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+      # Check for files that would conflict in case-insensitive filesystems
+      - id: check-case-conflict
+
+      # Check for merge conflicts
+      - id: check-merge-conflict
+
+      # Check for broken symlinks
+      - id: check-symlinks
+
+      # Ensure files end with a newline
+      - id: end-of-file-fixer
+        exclude: '\.min\.(js|css)$'
+
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+      # Check YAML syntax
+      - id: check-yaml
+        args: ['--safe']
+
+      # Check JSON syntax
+      - id: check-json
+
+      # Check for valid JSON with prettier formatting
+      - id: pretty-format-json
+        args: ['--autofix', '--no-sort-keys']
+        exclude: '(package-lock\.json|\.ipynb)$'
+
+      # Detect private keys
+      - id: detect-private-key
+
+      # Fix Python encoding pragma
+      - id: fix-byte-order-marker
+
+      # Check for files that would conflict with executables
+      - id: check-executables-have-shebangs
+
+      # Check shell scripts syntax
+      - id: check-shebang-scripts-are-executable
+
+  # Shell script linting
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        args: ['--severity=warning']
+        exclude: 'node_modules|\.git'
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.39.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix']
+        exclude: 'node_modules|\.git'
+
+  # Check for secrets and credentials
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: '(package-lock\.json|\.env\.example)$'
+
+  # Enforce conventional commits
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: []
+
+  # Validate Brewfiles
+  - repo: local
+    hooks:
+      # Validate Brewfile syntax
+      - id: validate-brewfiles
+        name: Validate Brewfiles
+        entry: scripts/validate-brewfiles.sh
+        language: system
+        files: '\.Brewfile$'
+        pass_filenames: true
+
+      # Validate shell scripts have execute permissions
+      - id: check-scripts-executable
+        name: Check scripts are executable
+        entry: scripts/check-scripts-executable.sh
+        language: system
+        files: 'brew/bundles/.*\.sh$'
+        pass_filenames: true
+
+      # Validate profiles.conf syntax
+      - id: validate-profiles-conf
+        name: Validate profiles.conf
+        entry: scripts/validate-profiles.sh
+        language: system
+        files: 'profiles\.conf$'
+        pass_filenames: true
+
+      # Check for TODOs (informational only)
+      - id: check-todos
+        name: Check TODO/FIXME comments
+        entry: scripts/check-todos.sh
+        language: system
+        pass_filenames: false
+        verbose: true
