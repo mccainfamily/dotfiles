@@ -49,6 +49,7 @@ exclude:
   - .gitbook.yaml
   - book.json
   - SUMMARY.md
+  - getting-started/README.md
 
 # Include files
 include:
