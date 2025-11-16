@@ -99,10 +99,25 @@ main() {
 
     # Install Homebrew
     log_info "Installing Homebrew to ${BREW_PREFIX}..."
-    log_warning "You may be prompted for your password"
     echo ""
 
+    # Request sudo access upfront
+    log_warning "Requesting sudo access for Homebrew installation..."
+    if ! sudo -v; then
+        log_error "Sudo access required for Homebrew installation"
+        return 1
+    fi
+
+    # Keep sudo alive in background during installation
+    ( while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null ) &
+    SUDO_KEEPALIVE_PID=$!
+
+    # Set NONINTERACTIVE for automated installation
+    export NONINTERACTIVE=1
+
     if /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+        # Kill sudo keepalive
+        kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
         log_success "Homebrew installed at ${BREW_PREFIX}"
 
         # Add Homebrew to PATH for this session
@@ -129,6 +144,8 @@ main() {
         log_success "Homebrew installation complete"
         return 0
     else
+        # Kill sudo keepalive on failure
+        kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
         log_error "Homebrew installation failed"
         return 1
     fi
