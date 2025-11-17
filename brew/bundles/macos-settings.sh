@@ -252,28 +252,53 @@ configure_screen() {
 configure_safari() {
     log_info "Configuring Safari settings..."
 
+    # Close Safari if it's running to allow preference changes
+    if pgrep -x "Safari" > /dev/null; then
+        log_warning "Safari is running. Attempting to close Safari..."
+        killall "Safari" &> /dev/null || true
+        sleep 2
+    fi
+
     # Privacy: don't send search queries to Apple
-    defaults write com.apple.Safari UniversalSearchEnabled -bool false
-    defaults write com.apple.Safari SuppressSearchSuggestions -bool true
-    log_success "Disabled sending search queries to Apple"
+    if defaults write com.apple.Safari UniversalSearchEnabled -bool false 2>/dev/null && \
+       defaults write com.apple.Safari SuppressSearchSuggestions -bool true 2>/dev/null; then
+        log_success "Disabled sending search queries to Apple"
+    else
+        log_warning "Could not configure Safari search settings (sandboxed preferences)"
+    fi
 
     # Show the full URL in the address bar
-    defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
-    log_success "Enabled showing full URLs in Safari"
+    if defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true 2>/dev/null; then
+        log_success "Enabled showing full URLs in Safari"
+    else
+        log_warning "Could not configure Safari URL display (sandboxed preferences)"
+    fi
 
     # Enable Safari's debug menu
-    defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
-    log_success "Enabled Safari debug menu"
+    if defaults write com.apple.Safari IncludeInternalDebugMenu -bool true 2>/dev/null; then
+        log_success "Enabled Safari debug menu"
+    else
+        log_warning "Could not enable Safari debug menu (sandboxed preferences)"
+    fi
 
     # Enable the Develop menu and the Web Inspector
-    defaults write com.apple.Safari IncludeDevelopMenu -bool true
-    defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-    defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
-    log_success "Enabled Safari Developer menu"
+    if defaults write com.apple.Safari IncludeDevelopMenu -bool true 2>/dev/null && \
+       defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true 2>/dev/null && \
+       defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true 2>/dev/null; then
+        log_success "Enabled Safari Developer menu"
+    else
+        log_warning "Could not enable Safari Developer menu (sandboxed preferences)"
+    fi
 
     # Enable "Do Not Track"
-    defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
-    log_success "Enabled Do Not Track in Safari"
+    if defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true 2>/dev/null; then
+        log_success "Enabled Do Not Track in Safari"
+    else
+        log_warning "Could not enable Do Not Track (sandboxed preferences)"
+    fi
+
+    log_info "Note: Safari preferences may need to be configured manually in Safari > Settings"
+    log_info "Safari uses sandboxed preferences which may require manual configuration"
 }
 
 ################################################################################
