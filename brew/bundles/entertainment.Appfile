@@ -2,6 +2,12 @@
 # Entertainment and music apps from the Mac App Store
 
 # ========================================
+# Reading
+# ========================================
+
+mas "Kindle", id: 302584613             # Amazon Kindle e-reader app
+
+# ========================================
 # Wellness & Focus
 # ========================================
 
