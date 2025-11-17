@@ -87,12 +87,17 @@ for brewfile in "${BUNDLES_DIR}"/*.Brewfile; do
             formula="${BASH_REMATCH[1]}"
             ((TOTAL_FORMULAS++))
 
-            # Validate using brew info
-            if brew info "$formula" >/dev/null 2>&1; then
+            # Show progress
+            echo -n "  Checking formula $TOTAL_FORMULAS: $formula... "
+
+            # Validate using brew info with timeout
+            if timeout 10 brew info "$formula" >/dev/null 2>&1; then
                 ((VALID_FORMULAS++))
+                echo "✓"
             else
                 ((INVALID_FORMULAS++))
                 INVALID_FORMULA_LIST+=("$formula (in $(basename "$brewfile"))")
+                echo "✗"
                 log_error "Invalid formula: $formula (in $(basename "$brewfile"))"
             fi
         fi
@@ -113,12 +118,17 @@ for brewfile in "${BUNDLES_DIR}"/*.Brewfile; do
             cask="${BASH_REMATCH[1]}"
             ((TOTAL_CASKS++))
 
-            # Validate using brew info --cask
-            if brew info --cask "$cask" >/dev/null 2>&1; then
+            # Show progress
+            echo -n "  Checking cask $TOTAL_CASKS: $cask... "
+
+            # Validate using brew info --cask with timeout
+            if timeout 10 brew info --cask "$cask" >/dev/null 2>&1; then
                 ((VALID_CASKS++))
+                echo "✓"
             else
                 ((INVALID_CASKS++))
                 INVALID_CASK_LIST+=("$cask (in $(basename "$brewfile"))")
+                echo "✗"
                 log_error "Invalid cask: $cask (in $(basename "$brewfile"))"
             fi
         fi
@@ -141,13 +151,18 @@ if [[ $MAS_AVAILABLE -eq 1 ]]; then
                 app_id="${BASH_REMATCH[2]}"
                 ((TOTAL_MAS++))
 
-                # Validate using mas info
+                # Show progress
+                echo -n "  Checking App Store app $TOTAL_MAS: $app_name (ID: $app_id)... "
+
+                # Validate using mas info with timeout
                 # mas info returns 0 if app exists, non-zero if not found
-                if mas info "$app_id" >/dev/null 2>&1; then
+                if timeout 10 mas info "$app_id" >/dev/null 2>&1; then
                     ((VALID_MAS++))
+                    echo "✓"
                 else
                     ((INVALID_MAS++))
                     INVALID_MAS_LIST+=("$app_name (ID: $app_id, in $(basename "$appfile"))")
+                    echo "✗"
                     log_error "Invalid App Store app: $app_name (ID: $app_id, in $(basename "$appfile"))"
                 fi
             fi
