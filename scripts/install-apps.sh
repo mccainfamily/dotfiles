@@ -267,6 +267,70 @@ install_bundle() {
     return ${module_success}
 }
 
+# Uninstall a single module (all associated file types)
+uninstall_bundle() {
+    local module="$1"
+    local module_success=0
+
+    # Check if module exists (has at least one file type)
+    if [[ ! -f "${BUNDLES_DIR}/${module}.Brewfile" ]] && \
+       [[ ! -f "${BUNDLES_DIR}/${module}.Appfile" ]]; then
+        log_error "Module '${module}' not found (no .Brewfile or .Appfile exists)"
+        return 1
+    fi
+
+    log_bundle "Uninstalling module: ${module}"
+
+    # Check if brew is available in PATH, otherwise use architecture-specific path
+    if command -v brew >/dev/null 2>&1; then
+        BREW_BIN="brew"
+    else
+        # Fallback to architecture-specific path
+        ARCH="$(uname -m)"
+        if [[ "${ARCH}" == "arm64" ]]; then
+            BREW_PREFIX="/opt/homebrew"
+        else
+            BREW_PREFIX="/usr/local"
+        fi
+        BREW_BIN="${BREW_PREFIX}/bin/brew"
+
+        # Verify brew exists at this path
+        if [[ ! -x "${BREW_BIN}" ]]; then
+            log_error "Homebrew not found. Please install Homebrew first."
+            log_info "Visit: https://brew.sh or run: ./scripts/single-user-homebrew-install.sh"
+            return 1
+        fi
+    fi
+
+    # Uninstall Brewfile packages if it exists
+    if [[ -f "${BUNDLES_DIR}/${module}.Brewfile" ]]; then
+        log_info "Uninstalling Homebrew packages from ${module}.Brewfile..."
+        if ${BREW_BIN} bundle cleanup --force --file="${BUNDLES_DIR}/${module}.Brewfile"; then
+            log_success "Brewfile packages for '${module}' uninstalled successfully"
+        else
+            log_warning "Some packages from Brewfile for '${module}' may not have been uninstalled"
+            module_success=1
+        fi
+    fi
+
+    # Uninstall Appfile apps if it exists
+    if [[ -f "${BUNDLES_DIR}/${module}.Appfile" ]]; then
+        log_info "Uninstalling App Store apps from ${module}.Appfile..."
+        if ${BREW_BIN} bundle cleanup --force --file="${BUNDLES_DIR}/${module}.Appfile"; then
+            log_success "Appfile apps for '${module}' uninstalled successfully"
+        else
+            log_warning "Some apps from Appfile for '${module}' may not have been uninstalled"
+            module_success=1
+        fi
+    fi
+
+    if [[ ${module_success} -eq 0 ]]; then
+        log_success "Module '${module}' uninstalled successfully"
+    fi
+
+    return ${module_success}
+}
+
 # Show usage
 usage() {
     cat << EOF
@@ -278,6 +342,7 @@ OPTIONS:
     --profile <name>       Install bundles for a specific profile
     --bundles "<list>"     Install specific bundles (space-separated)
     --exclude "<list>"     Exclude specific bundles (space-separated)
+    --uninstall            Uninstall packages instead of installing
     --yes, -y              Skip confirmation prompt (non-interactive mode)
     --list-profiles        List all available profiles
     --list-bundles         List all available bundles
@@ -293,6 +358,12 @@ EXAMPLES:
 
     # Install specific bundles
     ${0##*/} --bundles "base development"
+
+    # Uninstall a profile
+    ${0##*/} --uninstall --profile personal
+
+    # Uninstall specific bundles
+    ${0##*/} --uninstall --bundles "entertainment creative"
 
     # List available options
     ${0##*/} --list-profiles
@@ -360,6 +431,7 @@ main() {
     fi
 
     SKIP_CONFIRMATION=0
+    UNINSTALL_MODE=0
 
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -374,6 +446,10 @@ main() {
             --exclude)
                 EXCLUDE_BUNDLES="$2"
                 shift 2
+                ;;
+            --uninstall)
+                UNINSTALL_MODE=1
+                shift
                 ;;
             --yes|-y)
                 SKIP_CONFIRMATION=1
@@ -434,9 +510,13 @@ main() {
         log_info "Final bundles after exclusions: ${BUNDLES}"
     fi
 
-    # Confirm installation
+    # Confirm installation or uninstallation
     echo
-    echo "The following bundles will be installed:"
+    if [[ ${UNINSTALL_MODE} -eq 1 ]]; then
+        echo "The following bundles will be uninstalled:"
+    else
+        echo "The following bundles will be installed:"
+    fi
     for bundle in $BUNDLES; do
         echo "  - ${bundle}"
     done
@@ -453,10 +533,14 @@ main() {
         log_info "Skipping confirmation (non-interactive mode)"
     fi
 
-    # Request sudo access upfront for cask installations
-    log_info "Requesting sudo access for package installation..."
+    # Request sudo access upfront for cask installations/uninstallations
+    if [[ ${UNINSTALL_MODE} -eq 1 ]]; then
+        log_info "Requesting sudo access for package uninstallation..."
+    else
+        log_info "Requesting sudo access for package installation..."
+    fi
     if ! sudo -v; then
-        log_error "Sudo access required for installing cask applications"
+        log_error "Sudo access required for cask operations"
         exit 1
     fi
 
@@ -464,15 +548,25 @@ main() {
     ( while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null ) &
     SUDO_KEEPALIVE_PID=$!
 
-    # Install bundles
+    # Install or uninstall bundles
     echo
-    log_info "Starting installation..."
+    if [[ ${UNINSTALL_MODE} -eq 1 ]]; then
+        log_info "Starting uninstallation..."
+    else
+        log_info "Starting installation..."
+    fi
     echo
 
     failed_bundles=()
     for bundle in $BUNDLES; do
-        if ! install_bundle "$bundle"; then
-            failed_bundles+=("$bundle")
+        if [[ ${UNINSTALL_MODE} -eq 1 ]]; then
+            if ! uninstall_bundle "$bundle"; then
+                failed_bundles+=("$bundle")
+            fi
+        else
+            if ! install_bundle "$bundle"; then
+                failed_bundles+=("$bundle")
+            fi
         fi
         echo
     done
@@ -481,9 +575,17 @@ main() {
     echo
     echo "=================================================="
     if [[ ${#failed_bundles[@]} -eq 0 ]]; then
-        log_success "All bundles installed successfully!"
+        if [[ ${UNINSTALL_MODE} -eq 1 ]]; then
+            log_success "All bundles uninstalled successfully!"
+        else
+            log_success "All bundles installed successfully!"
+        fi
     else
-        log_warning "Installation completed with errors"
+        if [[ ${UNINSTALL_MODE} -eq 1 ]]; then
+            log_warning "Uninstallation completed with errors"
+        else
+            log_warning "Installation completed with errors"
+        fi
         echo
         echo "Failed bundles:"
         for bundle in "${failed_bundles[@]}"; do

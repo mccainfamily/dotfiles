@@ -1,7 +1,7 @@
 # Makefile for Dotfiles Repository
 # Initialize developer environment and manage development tasks
 
-.PHONY: help init install-deps install-hooks check test clean validate-brewfiles validate-scripts
+.PHONY: help init install-deps install-hooks check test clean validate-brewfiles validate-scripts validate-packages
 
 # Default target
 .DEFAULT_GOAL := help
@@ -51,7 +51,7 @@ install-hooks: ## Install pre-commit git hooks
 
 ##@ Validation & Testing
 
-check: validate-brewfiles validate-scripts validate-yaml ## Run all validation checks
+check: validate-brewfiles validate-scripts validate-yaml validate-packages ## Run all validation checks
 	@echo ""
 	@echo "✓ All validation checks passed!"
 
@@ -92,6 +92,10 @@ validate-yaml: ## Validate YAML files
 		echo "  ⚠ yamllint not installed, skipping YAML validation"; \
 	fi
 	@echo "✓ YAML files are valid"
+
+validate-packages: ## Validate brew formulas, casks, and App Store apps
+	@echo "Validating packages..."
+	@bash scripts/validate-packages.sh
 
 test: check ## Run all tests (alias for 'check')
 
