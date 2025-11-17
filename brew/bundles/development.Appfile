@@ -5,4 +5,4 @@
 # Development Utilities
 # ========================================
 
-mas "Mouse Jiggler", id: 1485832808     # Prevents screen sleep during development
+mas "Jiggler", id: 1485832808     # Prevents screen sleep during development

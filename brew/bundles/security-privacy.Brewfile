@@ -8,7 +8,6 @@
 brew "gnupg"              # GPG encryption
 brew "age"                # Modern encryption tool
 brew "sops"               # Encrypted secrets management
-brew "vault"              # HashiCorp Vault CLI
 brew "pass"               # Password manager
 
 # ========================================
@@ -23,7 +22,6 @@ brew "proxychains-ng"     # Proxy chains
 # Yubikey Tools
 # ========================================
 
-brew "yubikey-manager"    # YubiKey Manager CLI
 brew "ykman"              # YubiKey CLI
 brew "yubikey-personalization" # YubiKey personalization
 brew "yubico-piv-tool"    # PIV tool

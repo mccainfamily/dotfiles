@@ -17,7 +17,6 @@ brew "arp-scan"           # ARP scanning tool
 brew "wireshark"          # Packet analyzer (CLI)
 brew "tcpdump"            # Packet analyzer
 brew "ngrep"              # Network grep
-brew "tshark"             # Terminal Wireshark
 
 # ========================================
 # Network Monitoring & Diagnostics
@@ -56,9 +55,7 @@ brew "step"               # Step CLI for certificates
 # Network Testing & Fuzzing
 # ========================================
 
-brew "hping"              # TCP/IP packet assembler
 brew "vegeta"             # HTTP load testing
-brew "ab"                 # Apache Bench
 brew "wrk"                # HTTP benchmarking
 brew "hey"                # HTTP load generator
 
@@ -81,7 +78,7 @@ cask "tailscale"          # Tailscale mesh VPN
 brew "wireguard-tools"    # WireGuard VPN
 brew "openvpn"            # OpenVPN client
 brew "sshuttle"           # VPN over SSH
-brew "ngrok"              # Secure tunnels
+cask "ngrok"              # Secure tunnels
 
 # ========================================
 # SSH Tools
