@@ -413,11 +413,6 @@ main() {
     log_info "Configuring macOS system settings..."
     echo
 
-    log_warning "This script will modify your macOS system preferences"
-    log_warning "Press Ctrl+C to cancel, or Enter to continue..."
-    read -r
-    echo
-
     configure_trackpad
     echo
 
