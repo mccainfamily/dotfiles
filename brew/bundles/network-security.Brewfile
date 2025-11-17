@@ -39,7 +39,8 @@ brew "vnstat"             # Network traffic monitor
 
 brew "bind"               # DNS tools (dig, nslookup, host)
 brew "dnsmasq"            # DNS forwarder
-brew "dog"                # Modern dig alternative
+brew "doggo"              # Modern dig alternative
+brew "ldns"               # DNS library with drill tool
 brew "dnstracer"          # DNS tracing
 
 # ========================================

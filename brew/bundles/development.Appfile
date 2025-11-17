@@ -1,8 +1,2 @@
 # Development Bundle - App Store
 # Development tools from the Mac App Store
-
-# ========================================
-# Development Utilities
-# ========================================
-
-mas "Jiggler", id: 1485832808     # Prevents screen sleep during development

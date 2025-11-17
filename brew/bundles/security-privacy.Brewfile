@@ -26,7 +26,6 @@ brew "ykman"              # YubiKey CLI
 brew "yubikey-personalization" # YubiKey personalization
 brew "yubico-piv-tool"    # PIV tool
 brew "pam-u2f"            # U2F PAM module
-brew "libu2f-host"        # U2F host library
 brew "libfido2"           # FIDO2 library
 
 # ========================================
@@ -48,5 +47,4 @@ cask "keybase"            # Encrypted chat and file sharing
 
 # Security & Hardware
 cask "yubico-authenticator"  # Yubikey Authenticator
-cask "yubico-yubikey-manager" # Yubikey Manager GUI
 cask "gpg-suite"          # GPG tools for macOS
