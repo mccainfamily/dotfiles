@@ -6,6 +6,8 @@
 # Validates that all brew formulas, casks, and App Store apps specified in
 # bundles are valid and available without installing them.
 #
+# Uses fast lookup caches instead of individual brew info calls.
+#
 # Usage:
 #   ./validate-packages.sh
 ################################################################################
@@ -17,16 +19,26 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 BUNDLES_DIR="${DOTFILES_DIR}/brew/bundles"
 
+# Temp files for cleanup
+TEMP_FILES=()
+
 # Cleanup function
 cleanup() {
-    # Kill all processes in this process group
-    # This ensures all child processes (timeout, brew, etc.) are terminated
-    kill -TERM -$$ 2>/dev/null || true
-    exit 130
+    # Remove temp files
+    for tmpfile in "${TEMP_FILES[@]}"; do
+        rm -f "$tmpfile" 2>/dev/null || true
+    done
+
+    # Kill all processes in this process group if interrupted
+    if [[ "${1:-}" == "interrupted" ]]; then
+        kill -TERM -$$ 2>/dev/null || true
+        exit 130
+    fi
 }
 
 # Set up signal handlers to ensure clean exit
-trap cleanup SIGINT SIGTERM SIGQUIT
+trap 'cleanup interrupted' SIGINT SIGTERM SIGQUIT
+trap 'cleanup' EXIT
 
 # Run in a new process group so we can kill all children easily
 set -m
@@ -88,6 +100,29 @@ log_info "Validating packages in bundles..."
 echo
 
 ################################################################################
+# Build lookup caches for fast validation
+################################################################################
+
+log_info "Building package lookup caches (this may take a moment)..."
+
+# Build formula cache using brew formulae
+# This returns all available formulas quickly
+FORMULA_CACHE=$(mktemp)
+TEMP_FILES+=("$FORMULA_CACHE")
+brew formulae | sort > "$FORMULA_CACHE"
+FORMULA_COUNT=$(wc -l < "$FORMULA_CACHE" | tr -d ' ')
+log_success "Cached $FORMULA_COUNT formulas"
+
+# Build cask cache using brew casks
+CASK_CACHE=$(mktemp)
+TEMP_FILES+=("$CASK_CACHE")
+brew casks | sort > "$CASK_CACHE"
+CASK_COUNT=$(wc -l < "$CASK_CACHE" | tr -d ' ')
+log_success "Cached $CASK_COUNT casks"
+
+echo
+
+################################################################################
 # Validate Homebrew Formulas
 ################################################################################
 
@@ -101,22 +136,21 @@ for brewfile in "${BUNDLES_DIR}"/*.Brewfile; do
             formula="${BASH_REMATCH[1]}"
             ((TOTAL_FORMULAS++))
 
-            # Show progress
-            echo -n "  Checking formula $TOTAL_FORMULAS: $formula... "
-
-            # Validate using brew info with timeout
-            if timeout 10 brew info "$formula" >/dev/null 2>&1; then
+            # Fast lookup in cache using grep (set +e temporarily since grep returns non-zero if not found)
+            set +e
+            grep -qx "$formula" "$FORMULA_CACHE"
+            if [[ $? -eq 0 ]]; then
                 ((VALID_FORMULAS++))
-                echo "✓"
             else
                 ((INVALID_FORMULAS++))
                 INVALID_FORMULA_LIST+=("$formula (in $(basename "$brewfile"))")
-                echo "✗"
                 log_error "Invalid formula: $formula (in $(basename "$brewfile"))"
             fi
+            set -e
         fi
     done < "$brewfile"
 done
+log_success "Validated $TOTAL_FORMULAS formulas"
 
 ################################################################################
 # Validate Homebrew Casks
@@ -132,29 +166,28 @@ for brewfile in "${BUNDLES_DIR}"/*.Brewfile; do
             cask="${BASH_REMATCH[1]}"
             ((TOTAL_CASKS++))
 
-            # Show progress
-            echo -n "  Checking cask $TOTAL_CASKS: $cask... "
-
-            # Validate using brew info --cask with timeout
-            if timeout 10 brew info --cask "$cask" >/dev/null 2>&1; then
+            # Fast lookup in cache using grep (set +e temporarily since grep returns non-zero if not found)
+            set +e
+            grep -qx "$cask" "$CASK_CACHE"
+            if [[ $? -eq 0 ]]; then
                 ((VALID_CASKS++))
-                echo "✓"
             else
                 ((INVALID_CASKS++))
                 INVALID_CASK_LIST+=("$cask (in $(basename "$brewfile"))")
-                echo "✗"
                 log_error "Invalid cask: $cask (in $(basename "$brewfile"))"
             fi
+            set -e
         fi
     done < "$brewfile"
 done
+log_success "Validated $TOTAL_CASKS casks"
 
 ################################################################################
 # Validate App Store Apps
 ################################################################################
 
 if [[ $MAS_AVAILABLE -eq 1 ]]; then
-    log_info "Validating App Store apps..."
+    log_info "Validating App Store apps (using mas search)..."
     for appfile in "${BUNDLES_DIR}"/*.Appfile; do
         [[ -f "$appfile" ]] || continue
 
@@ -165,23 +198,19 @@ if [[ $MAS_AVAILABLE -eq 1 ]]; then
                 app_id="${BASH_REMATCH[2]}"
                 ((TOTAL_MAS++))
 
-                # Show progress
-                echo -n "  Checking App Store app $TOTAL_MAS: $app_name (ID: $app_id)... "
-
-                # Validate using mas info with timeout
-                # mas info returns 0 if app exists, non-zero if not found
+                # Validate using mas info with timeout (mas doesn't have a bulk search)
+                # This is still slower but necessary for App Store validation
                 if timeout 10 mas info "$app_id" >/dev/null 2>&1; then
                     ((VALID_MAS++))
-                    echo "✓"
                 else
                     ((INVALID_MAS++))
                     INVALID_MAS_LIST+=("$app_name (ID: $app_id, in $(basename "$appfile"))")
-                    echo "✗"
                     log_error "Invalid App Store app: $app_name (ID: $app_id, in $(basename "$appfile"))"
                 fi
             fi
         done < "$appfile"
     done
+    log_success "Validated $TOTAL_MAS App Store apps"
 else
     log_warning "mas (Mac App Store CLI) not installed - skipping App Store validation"
     log_info "Install with: brew install mas"
