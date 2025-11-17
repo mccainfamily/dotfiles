@@ -1,8 +1,2 @@
 # Monitoring Bundle - App Store
 # Monitoring and surveillance tools from the Mac App Store
-
-# ========================================
-# Security & Surveillance
-# ========================================
-
-mas "AvertX Remote", id: 1476782621     # Security camera monitoring
