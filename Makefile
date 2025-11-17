@@ -51,9 +51,12 @@ install-hooks: ## Install pre-commit git hooks
 
 ##@ Validation & Testing
 
-check: validate-brewfiles validate-scripts validate-yaml validate-packages ## Run all validation checks
+check: validate-brewfiles validate-scripts validate-yaml ## Run all validation checks (skip package validation by default)
 	@echo ""
 	@echo "✓ All validation checks passed!"
+	@echo ""
+	@echo "Note: Package validation skipped (takes several minutes)."
+	@echo "Run 'make validate-packages' to validate all brew formulas, casks, and App Store apps."
 
 validate-brewfiles: ## Validate all Brewfile syntax
 	@echo "Validating Brewfiles..."
