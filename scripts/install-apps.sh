@@ -230,7 +230,7 @@ install_bundle() {
     # Install Brewfile if it exists
     if [[ -f "${BUNDLES_DIR}/${module}.Brewfile" ]]; then
         log_info "Installing Homebrew packages from ${module}.Brewfile..."
-        if sudo -n ${BREW_BIN} bundle install --file="${BUNDLES_DIR}/${module}.Brewfile"; then
+        if ${BREW_BIN} bundle install --file="${BUNDLES_DIR}/${module}.Brewfile"; then
             log_success "Brewfile for '${module}' installed successfully"
         else
             log_error "Failed to install Brewfile for '${module}'"
@@ -241,7 +241,7 @@ install_bundle() {
     # Install Appfile if it exists
     if [[ -f "${BUNDLES_DIR}/${module}.Appfile" ]]; then
         log_info "Installing App Store apps from ${module}.Appfile..."
-        if sudo -n ${BREW_BIN} bundle install --file="${BUNDLES_DIR}/${module}.Appfile"; then
+        if ${BREW_BIN} bundle install --file="${BUNDLES_DIR}/${module}.Appfile"; then
             log_success "Appfile for '${module}' installed successfully"
         else
             log_error "Failed to install Appfile for '${module}'"
