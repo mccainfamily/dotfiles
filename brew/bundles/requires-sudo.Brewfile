@@ -27,5 +27,5 @@ cask "microsoft-teams"        # Microsoft Teams
 # AV Studio & Streaming
 # ========================================
 
-cask "obs-ndi"                # NDI plugin for OBS
+# Note: obs-ndi not available via Homebrew - install manually from OBS forums
 cask "elgato-stream-deck"     # Elgato Stream Deck software

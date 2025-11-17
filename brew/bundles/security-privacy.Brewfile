@@ -23,7 +23,6 @@ brew "proxychains-ng"     # Proxy chains
 # ========================================
 
 brew "ykman"              # YubiKey CLI
-brew "yubikey-personalization" # YubiKey personalization
 brew "yubico-piv-tool"    # PIV tool
 brew "pam-u2f"            # U2F PAM module
 brew "libfido2"           # FIDO2 library

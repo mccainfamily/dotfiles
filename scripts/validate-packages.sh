@@ -29,9 +29,8 @@ cleanup() {
         rm -f "$tmpfile" 2>/dev/null || true
     done
 
-    # Kill all processes in this process group if interrupted
+    # Exit with appropriate code if interrupted
     if [[ "${1:-}" == "interrupted" ]]; then
-        kill -TERM -$$ 2>/dev/null || true
         exit 130
     fi
 }
@@ -39,9 +38,6 @@ cleanup() {
 # Set up signal handlers to ensure clean exit
 trap 'cleanup interrupted' SIGINT SIGTERM SIGQUIT
 trap 'cleanup' EXIT
-
-# Run in a new process group so we can kill all children easily
-set -m
 
 # Colors
 RED='\033[0;31m'
@@ -134,19 +130,16 @@ for brewfile in "${BUNDLES_DIR}"/*.Brewfile; do
     while IFS= read -r line; do
         if [[ $line =~ ^brew[[:space:]]+\"([^\"]+)\" ]]; then
             formula="${BASH_REMATCH[1]}"
-            ((TOTAL_FORMULAS++))
+            ((TOTAL_FORMULAS++)) || true
 
-            # Fast lookup in cache using grep (set +e temporarily since grep returns non-zero if not found)
-            set +e
-            grep -qx "$formula" "$FORMULA_CACHE"
-            if [[ $? -eq 0 ]]; then
-                ((VALID_FORMULAS++))
+            # Fast lookup in cache using grep
+            if grep -qx "$formula" "$FORMULA_CACHE" 2>/dev/null; then
+                ((VALID_FORMULAS++)) || true
             else
-                ((INVALID_FORMULAS++))
+                ((INVALID_FORMULAS++)) || true
                 INVALID_FORMULA_LIST+=("$formula (in $(basename "$brewfile"))")
                 log_error "Invalid formula: $formula (in $(basename "$brewfile"))"
             fi
-            set -e
         fi
     done < "$brewfile"
 done
@@ -164,19 +157,16 @@ for brewfile in "${BUNDLES_DIR}"/*.Brewfile; do
     while IFS= read -r line; do
         if [[ $line =~ ^cask[[:space:]]+\"([^\"]+)\" ]]; then
             cask="${BASH_REMATCH[1]}"
-            ((TOTAL_CASKS++))
+            ((TOTAL_CASKS++)) || true
 
-            # Fast lookup in cache using grep (set +e temporarily since grep returns non-zero if not found)
-            set +e
-            grep -qx "$cask" "$CASK_CACHE"
-            if [[ $? -eq 0 ]]; then
-                ((VALID_CASKS++))
+            # Fast lookup in cache using grep
+            if grep -qx "$cask" "$CASK_CACHE" 2>/dev/null; then
+                ((VALID_CASKS++)) || true
             else
-                ((INVALID_CASKS++))
+                ((INVALID_CASKS++)) || true
                 INVALID_CASK_LIST+=("$cask (in $(basename "$brewfile"))")
                 log_error "Invalid cask: $cask (in $(basename "$brewfile"))"
             fi
-            set -e
         fi
     done < "$brewfile"
 done
@@ -196,14 +186,14 @@ if [[ $MAS_AVAILABLE -eq 1 ]]; then
             if [[ $line =~ ^mas[[:space:]]+\"([^\"]+)\",[[:space:]]+id:[[:space:]]+([0-9]+) ]]; then
                 app_name="${BASH_REMATCH[1]}"
                 app_id="${BASH_REMATCH[2]}"
-                ((TOTAL_MAS++))
+                ((TOTAL_MAS++)) || true
 
                 # Validate using mas info with timeout (mas doesn't have a bulk search)
                 # This is still slower but necessary for App Store validation
                 if timeout 10 mas info "$app_id" >/dev/null 2>&1; then
-                    ((VALID_MAS++))
+                    ((VALID_MAS++)) || true
                 else
-                    ((INVALID_MAS++))
+                    ((INVALID_MAS++)) || true
                     INVALID_MAS_LIST+=("$app_name (ID: $app_id, in $(basename "$appfile"))")
                     log_error "Invalid App Store app: $app_name (ID: $app_id, in $(basename "$appfile"))"
                 fi

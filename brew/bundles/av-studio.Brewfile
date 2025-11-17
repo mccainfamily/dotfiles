@@ -14,8 +14,8 @@ cask "obs"                              # Open Broadcaster Software for live str
 # ========================================
 
 cask "ndi-tools"                        # NDI video suite (NDI Studio Monitor, etc.)
-cask "ndi-hx-driver"                    # NDI HX drivers
 
+# Note: ndi-hx-driver not available via Homebrew - install manually from NDI website if needed
 # Note: OSee GoStream Deck software may need manual installation from manufacturer
 
 # ========================================

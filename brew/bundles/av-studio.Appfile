@@ -11,6 +11,5 @@ mas "Final Cut Pro", id: 424389933      # Professional video editing
 # Audio Production
 # ========================================
 
-mas "X32-Mix", id: 566167328            # Behringer X32 mixer control
-
+# Note: X32-Mix (ID: 566167328) no longer available in Mac App Store
 # Note: DJ software (djay Pro, VirtualDJ Home) moved to dj bundle

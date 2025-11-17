@@ -13,7 +13,8 @@ brew "chamber"            # AWS SSM Parameter Store
 # Google Cloud
 # ========================================
 
-cask "google-cloud-sdk"   # GCloud CLI
+# Note: Install Google Cloud SDK using the official installer:
+# curl https://sdk.cloud.google.com | bash
 
 # ========================================
 # Azure

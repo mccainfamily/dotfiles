@@ -44,9 +44,7 @@ brew "picocom"
 # Circuit Design & Simulation
 # ========================================
 
-# Fritzing - Electronic design automation software
-# Great for circuit diagrams and PCB design
-cask "fritzing"
+# Note: Fritzing not available via Homebrew - download from fritzing.org
 
 # ========================================
 # Cross-Platform Development

@@ -84,32 +84,18 @@ repos:
         stages: [commit-msg]
         args: []
 
-  # Validate Brewfiles
+  # Local validation hooks
   - repo: local
     hooks:
-      # Validate Brewfile syntax
-      - id: validate-brewfiles
-        name: Validate Brewfiles
-        entry: scripts/validate-brewfiles.sh
+      # Run make check for comprehensive validation
+      # This runs all validation checks: Brewfiles, scripts, YAML, and packages
+      - id: make-check
+        name: Run make check
+        entry: make
+        args: ['check']
         language: system
-        files: '\.Brewfile$'
-        pass_filenames: true
-
-      # Validate shell scripts have execute permissions
-      - id: check-scripts-executable
-        name: Check scripts are executable
-        entry: scripts/check-scripts-executable.sh
-        language: system
-        files: 'brew/bundles/.*\.sh$'
-        pass_filenames: true
-
-      # Validate profiles.conf syntax
-      - id: validate-profiles-conf
-        name: Validate profiles.conf
-        entry: scripts/validate-profiles.sh
-        language: system
-        files: 'profiles\.conf$'
-        pass_filenames: true
+        pass_filenames: false
+        always_run: true
 
       # Check for TODOs (informational only)
       - id: check-todos

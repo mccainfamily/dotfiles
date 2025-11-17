@@ -15,7 +15,7 @@ brew "rust"               # Rust programming language
 # ========================================
 
 brew "lazygit"            # Git TUI
-brew "delta"              # Better git diff
+brew "git-delta"          # Better git diff
 
 # ========================================
 # Web & API Tools
