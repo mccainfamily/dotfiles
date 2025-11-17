@@ -1,0 +1,9 @@
+# DJ Bundle - App Store
+# DJ and mixing software
+
+# ========================================
+# DJ Software
+# ========================================
+
+mas "djay Pro", id: 450527929           # Professional DJ software
+mas "VirtualDJ Home", id: 1610238590    # DJ mixing software

@@ -47,4 +47,5 @@ cask "keybase"            # Encrypted chat and file sharing
 
 # Security & Hardware
 cask "yubico-authenticator"  # Yubikey Authenticator
-cask "gpg-suite"          # GPG tools for macOS
+
+# Note: gpg-suite moved to requires-sudo bundle due to password requirement

@@ -75,7 +75,6 @@ brew "prettyping"         # Pretty ping
 # VPN & Tunneling
 # ========================================
 
-cask "tailscale"          # Tailscale mesh VPN
 brew "wireguard-tools"    # WireGuard VPN
 brew "openvpn"            # OpenVPN client
 brew "sshuttle"           # VPN over SSH
@@ -98,8 +97,4 @@ brew "telnet"             # Telnet client
 brew "rsync"              # File sync utility
 brew "rclone"             # Cloud storage sync
 
-# ========================================
-# GUI Applications
-# ========================================
-
-cask "wireshark-app"      # Packet analyzer GUI
+# Note: wireshark-app moved to requires-sudo bundle due to password requirement

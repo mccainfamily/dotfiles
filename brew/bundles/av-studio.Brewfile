@@ -6,7 +6,8 @@
 # ========================================
 
 cask "obs"                              # Open Broadcaster Software for live streaming
-cask "obs-ndi"                          # NDI plugin for OBS
+
+# Note: obs-ndi and elgato-stream-deck moved to requires-sudo bundle due to password requirement
 
 # ========================================
 # Video Streaming & NDI
@@ -15,11 +16,6 @@ cask "obs-ndi"                          # NDI plugin for OBS
 cask "ndi-tools"                        # NDI video suite (NDI Studio Monitor, etc.)
 cask "ndi-hx-driver"                    # NDI HX drivers
 
-# ========================================
-# Stream Control
-# ========================================
-
-cask "elgato-stream-deck"               # Elgato Stream Deck software
 # Note: OSee GoStream Deck software may need manual installation from manufacturer
 
 # ========================================

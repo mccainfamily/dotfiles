@@ -65,7 +65,6 @@ brew "xz"                 # XZ compression
 cask "iterm2"             # Feature-rich terminal emulator
 cask "ghostty"            # Modern terminal emulator
 cask "google-chrome"      # Web browser
-cask "google-drive"       # Google Drive desktop app
 
 # ========================================
 # Fonts

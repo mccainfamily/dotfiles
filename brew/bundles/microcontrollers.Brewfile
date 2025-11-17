@@ -63,10 +63,6 @@ brew "esptool"
 # Required for many microcontroller programmers
 brew "libusb"
 
-# libftdi - Library to talk to FTDI chips
-# Used by many USB-to-serial adapters
-brew "libftdi"
-
 # Note: Useful tools for microcontroller development:
 #   - Arduino IDE 2.x includes built-in serial monitor and board manager
 #   - PlatformIO integrates with VS Code for advanced development

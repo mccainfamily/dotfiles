@@ -1,6 +1,6 @@
 # Dotfiles Repository
 
-**Modular, role-based development environment** for network engineering, DevOps, and software development. Features a flexible bundle system for customized installations.
+This is the dotfiles for McCain family MacOS systems. It also features a flexible profile and app bundle system for customized installation of applications.
 
 📚 **[Read the Full Documentation](https://mccainfamily.github.io/dotfiles/)**
 

@@ -6,7 +6,6 @@
 # ========================================
 
 cask "spotify"            # Music streaming
-cask "audible"            # Audiobooks
 
 # ========================================
 # Reading
