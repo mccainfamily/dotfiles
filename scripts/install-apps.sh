@@ -61,14 +61,9 @@ log_bundle() {
 # Cleanup function
 ################################################################################
 
-# Global variable to track sudo keepalive PID
-SUDO_KEEPALIVE_PID=""
-
 cleanup() {
-    # Kill sudo keepalive if it's running
-    if [[ -n "${SUDO_KEEPALIVE_PID}" ]]; then
-        kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
-    fi
+    # Placeholder for future cleanup tasks
+    :
 }
 
 # Set trap to cleanup on exit
@@ -533,20 +528,8 @@ main() {
         log_info "Skipping confirmation (non-interactive mode)"
     fi
 
-    # Request sudo access upfront for cask installations/uninstallations
-    if [[ ${UNINSTALL_MODE} -eq 1 ]]; then
-        log_info "Requesting sudo access for package uninstallation..."
-    else
-        log_info "Requesting sudo access for package installation..."
-    fi
-    if ! sudo -v; then
-        log_error "Sudo access required for cask operations"
-        exit 1
-    fi
-
-    # Keep sudo alive in background during installation
-    ( while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null ) &
-    SUDO_KEEPALIVE_PID=$!
+    # Note: Homebrew will prompt for sudo password when needed for cask installations
+    # No need to request sudo upfront - let Homebrew handle it per-package
 
     # Install or uninstall bundles
     echo
