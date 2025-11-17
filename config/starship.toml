@@ -232,13 +232,8 @@ symbol = " "
 style = "bold purple"
 disabled = false
 
-# Ansible
-[ansible]
-format = "via [$symbol$version]($style) "
-symbol = "🅰 "
-style = "bold red"
-disabled = false
-detect_files = ["ansible.cfg", "playbook.yml", "playbook.yaml"]
+# Note: Ansible module was removed from Starship in recent versions
+# Use custom module if needed
 
 # ========================================
 # Environment & System Info
