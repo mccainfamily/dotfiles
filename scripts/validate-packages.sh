@@ -17,6 +17,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 BUNDLES_DIR="${DOTFILES_DIR}/brew/bundles"
 
+# Cleanup function
+cleanup() {
+    # Kill all processes in this process group
+    # This ensures all child processes (timeout, brew, etc.) are terminated
+    kill -TERM -$$ 2>/dev/null || true
+    exit 130
+}
+
+# Set up signal handlers to ensure clean exit
+trap cleanup SIGINT SIGTERM SIGQUIT
+
+# Run in a new process group so we can kill all children easily
+set -m
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
