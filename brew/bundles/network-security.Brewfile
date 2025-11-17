@@ -102,4 +102,4 @@ brew "rclone"             # Cloud storage sync
 # GUI Applications
 # ========================================
 
-cask "wireshark"          # Packet analyzer GUI
+cask "wireshark-app"      # Packet analyzer GUI
